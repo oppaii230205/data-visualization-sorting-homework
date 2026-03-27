@@ -1,63 +1,91 @@
 \section{Kết quả và insight từ biểu đồ}
 
-\subsection{Nhận xét tổng quan}
+\subsection{Đọc insight theo ngôn ngữ trực quan}
 
-Từ Hình \ref{fig:time-linear} và Hình \ref{fig:time-logy}, có thể quan sát xu hướng chung:
+Phần này được trình bày theo đúng cách đọc biểu đồ trong Data Visualization:
+đầu tiên đọc \textbf{hình dạng tổng thể}, sau đó đọc \textbf{khoảng cách tương đối}, cuối cùng mới gắn với \textbf{kết luận định lượng}.
+
+\subsection{Hình \ref{fig:time-linear}: góc nhìn chênh lệch tuyệt đối}
+
+Trên trục $y$ tuyến tính, điều nhìn thấy rõ nhất là "độ cao tuyệt đối" của thời gian chạy:
 \begin{itemize}[leftmargin=1.2cm]
-    \item Insertion Sort tăng rất nhanh khi $n$ tăng và trở thành thuật toán chậm nhất ở $n$ lớn.
-    \item Quick Sort duy trì hiệu năng tốt trên hầu hết kiểu dữ liệu.
-    \item Counting Sort có thời gian chạy thấp và ổn định nhất trong bộ dữ liệu hiện tại.
+    \item Đường Insertion Sort vọt mạnh ở mốc $n=100000$ trong mọi panel, tạo khoảng cách rất lớn với hai thuật toán còn lại.
+    \item Quick Sort và Counting Sort nằm sát đáy đồ thị ở panel có Insertion tăng mạnh, cho thấy hiện tượng "nén thị giác" khi dải giá trị quá rộng.
+    \item Vì vậy, linear scale phù hợp để trả lời câu hỏi: \textit{mức tốn thời gian tuyệt đối là bao nhiêu}. Hình này cho thấy rõ chi phí thực thi thực tế nếu ưu tiên thời gian chạy.
 \end{itemize}
+
+\subsection{Hình \ref{fig:time-logy}: góc nhìn cấu trúc tăng trưởng}
+
+Khi chuyển sang log-$y$, dữ liệu không còn bị nén mạnh và hình thái đường trở nên dễ so sánh:
+\begin{itemize}[leftmargin=1.2cm]
+    \item Thứ hạng giữa ba thuật toán ổn định trên tất cả panel: Counting Sort nhanh nhất, Quick Sort đứng thứ hai, Insertion Sort chậm nhất.
+    \item Độ dốc tương đối của các đường phản ánh tốc độ tăng khi $n$ tăng: Insertion tăng nhanh nhất, Counting tăng chậm nhất.
+    \item Panel Nearly Sorted cho thấy Insertion "dịu" hơn rõ rệt so với Random/Reversed, nhưng vẫn không vượt qua Quick hoặc Counting ở mốc lớn.
+\end{itemize}
+
+Nói cách khác, nếu Hình \ref{fig:time-linear} trả lời "\textit{chậm bao nhiêu ms}", thì Hình \ref{fig:time-logy} trả lời "\textit{tăng nhanh đến mức nào theo bậc độ lớn}".
+
+\subsection{Hình \ref{fig:bar-nmax}: snapshot ra quyết định ở tải lớn}
+
+Biểu đồ cột tại $n=100000$ đóng vai trò tổng kết nhanh:
+\begin{itemize}[leftmargin=1.2cm]
+    \item Trong cả 4 input type, cột Counting Sort luôn thấp nhất, cột Quick Sort luôn ở giữa, cột Insertion Sort luôn cao nhất.
+    \item Khoảng cách giữa Insertion và hai thuật toán còn lại rất lớn ở Random, Reversed và Many Duplicates; nhỏ nhất ở Nearly Sorted nhưng vẫn vượt trội theo hướng bất lợi cho Insertion.
+    \item Với góc nhìn triển khai thực tế ở dữ liệu lớn, ranking thuật toán là nhất quán và không đảo chiều theo loại dữ liệu.
+\end{itemize}
+
+\subsection{Hình \ref{fig:comparisons}: biểu đồ phụ trợ kiểm chứng}
+
+Biểu đồ comparisons trên thang log-log có giá trị như một lớp kiểm chứng:
+\begin{itemize}[leftmargin=1.2cm]
+    \item Thứ hạng theo số phép so sánh đồng pha với thứ hạng theo thời gian chạy.
+    \item Insertion có mức comparisons cao nhất, phù hợp với việc đường thời gian tăng mạnh trong hai hình chính.
+    \item Counting có mức comparisons thấp nhất và ổn định hơn, nhất quán với vai trò thuật toán nhanh nhất trên các hình thời gian.
+\end{itemize}
+
+Do đó, insight không chỉ dựa vào một chỉ số duy nhất mà được củng cố bởi hai lớp biểu diễn khác nhau: \textit{time} và \textit{comparisons}.
 
 \subsection{Insight theo từng kiểu dữ liệu}
 
 \textbf{Random:}
 \begin{itemize}[leftmargin=1.2cm]
-    \item Chênh lệch giữa Insertion Sort và hai thuật toán còn lại tăng mạnh khi $n$ lớn.
-    \item Quick Sort giữ được ưu thế rõ rệt so với Insertion Sort.
+    \item Trên cả linear và log-$y$, khoảng cách giữa Insertion và hai thuật toán còn lại mở rộng rất nhanh khi $n$ tăng.
+    \item Đây là kịch bản tổng quát cho thấy ưu thế ổn định của Quick và Counting so với Insertion ở dữ liệu lớn.
 \end{itemize}
 
 \textbf{Reversed:}
 \begin{itemize}[leftmargin=1.2cm]
-    \item Đây là trường hợp bất lợi cho Insertion Sort, thể hiện mức tăng thời gian rất lớn ở $n=100000$.
-    \item Quick Sort và Counting Sort ít bị ảnh hưởng hơn.
+    \item Panel Reversed thể hiện Insertion tệ nhất trong bốn loại input (đường cao nhất và dốc mạnh nhất ở vùng $n$ lớn).
+    \item Quick và Counting duy trì khoảng cách thấp hơn nhiều, cho thấy độ bền tốt hơn trước dữ liệu bất lợi.
 \end{itemize}
 
 \textbf{Nearly Sorted:}
 \begin{itemize}[leftmargin=1.2cm]
-    \item Insertion Sort cải thiện đáng kể so với hai kiểu dữ liệu khó hơn (Random, Reversed).
-    \item Dù vậy, ở $n$ rất lớn, Quick Sort và Counting Sort vẫn có lợi thế thời gian.
+    \item Đây là panel duy nhất mà đường Insertion thấp hơn rõ so với chính nó ở Random/Reversed.
+    \item Tuy nhiên về thứ hạng tổng thể, Insertion vẫn đứng sau Quick và Counting ở mốc lớn.
 \end{itemize}
 
 \textbf{Many Duplicates:}
 \begin{itemize}[leftmargin=1.2cm]
-    \item Counting Sort đặc biệt phù hợp khi dữ liệu có nhiều giá trị lặp.
-    \item Khoảng cách giữa Counting Sort và Insertion Sort trở nên rõ ràng ở mốc $n$ lớn.
+    \item Counting thể hiện ưu thế rõ và ổn định, phù hợp với bản chất thuật toán khi miền giá trị có nhiều phần tử lặp.
+    \item Quick vẫn giữ vị trí trung gian; Insertion tăng mạnh ở mốc $n$ lớn.
 \end{itemize}
 
-\subsection{Insight tại mốc $n$ lớn nhất}
-
-Hình \ref{fig:bar-nmax} cho thấy bức tranh "áp lực tải" tại $n=100000$:
-\begin{itemize}[leftmargin=1.2cm]
-    \item Insertion Sort có chi phí cao vượt trội so với hai thuật toán còn lại.
-    \item Quick Sort là lựa chọn cân bằng tốt giữa các kiểu dữ liệu.
-    \item Counting Sort giữ mức thời gian thấp nhất trong tập dữ liệu đo hiện tại.
-\end{itemize}
-
-\subsection{Bảng tổng hợp kết luận chính}
+\subsection{Kết luận rút ra trực tiếp từ bộ hình}
 
 \begin{table}[H]
 \centering
 \renewcommand{\arraystretch}{1.25}
-\begin{tabular}{p{3.5cm}p{9.5cm}}
+\begin{tabular}{p{3.8cm}p{9.2cm}}
 \toprule
-\textbf{Khía cạnh} & \textbf{Kết luận chính} \\
+\textbf{Khía cạnh} & \textbf{Insight trực quan chính} \\
 \midrule
-Tốc độ tổng thể & Counting Sort và Quick Sort vượt trội so với Insertion Sort ở $n$ lớn. \\
-Độ nhạy dữ liệu & Insertion Sort nhạy với dữ liệu khó (đặc biệt reversed); Counting Sort ổn định trong bộ dữ liệu có nhiều trùng lặp. \\
-Giá trị của log-$y$ & Log-$y$ giúp nhìn rõ khác biệt tương đối và xu hướng tăng của từng thuật toán. \\
+Thứ hạng thuật toán & Trên mọi hình chính, thứ hạng không đảo chiều: Counting Sort $<$ Quick Sort $<$ Insertion Sort. \\
+Ảnh hưởng kiểu dữ liệu & Reversed là trường hợp bất lợi nhất cho Insertion; Nearly Sorted là trường hợp Insertion cải thiện rõ nhất. \\
+Vai trò của scale & Linear cho đọc chênh lệch tuyệt đối, log-$y$ cho đọc cấu trúc tăng trưởng; cần dùng cả hai để tránh kết luận thiếu. \\
+Độ tin cậy insight & Biểu đồ comparisons đồng pha với biểu đồ thời gian, củng cố rằng kết luận không do hiệu ứng hiển thị. \\
 \bottomrule
 \end{tabular}
-\caption{Top insight tóm tắt từ các biểu đồ}
+\caption{Tổng hợp insight theo góc nhìn trực quan hóa dữ liệu}
 \label{tab:top-insights}
 \end{table}
