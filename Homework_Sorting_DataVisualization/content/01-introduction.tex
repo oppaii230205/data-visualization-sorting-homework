@@ -1,6 +1,8 @@
 \section{Giới thiệu và mục tiêu}
 
-Bài báo cáo này trình bày trực quan hóa hiệu năng của ba thuật toán sắp xếp điển hình gồm \textbf{Insertion Sort}, \textbf{Quick Sort} và \textbf{Counting Sort} trên bốn kiểu dữ liệu đầu vào:
+Trong đồ án này, tôi tập trung trực quan hóa hiệu năng của ba thuật toán sắp xếp tiêu biểu:
+\textbf{Insertion Sort}, \textbf{Quick Sort} và \textbf{Counting Sort}.
+Để đánh giá toàn diện, tôi xây dựng dữ liệu đầu vào theo bốn nhóm đặc trưng:
 \begin{itemize}[leftmargin=1.2cm]
     \item Random.
     \item Reversed.
@@ -8,24 +10,25 @@ Bài báo cáo này trình bày trực quan hóa hiệu năng của ba thuật t
     \item Many Duplicates.
 \end{itemize}
 
-Mục tiêu chính của bài là:
+Về mặt triển khai, tôi chủ động cài đặt chương trình C++ để:
 \begin{itemize}[leftmargin=1.2cm]
-    \item Xây dựng các biểu đồ đúng chuẩn trực quan hóa dữ liệu để so sánh thuật toán theo kích thước đầu vào $n$.
-    \item So sánh và phân tích khác biệt khi dùng \textbf{thang tuyến tính} và \textbf{thang log trên trục $y$}.
-    \item Rút ra insight về hành vi thuật toán theo từng đặc trưng dữ liệu.
-    \item Đánh giá các kỹ thuật trực quan được sử dụng và lý do lựa chọn.
+    \item Cài đặt các thuật toán sắp xếp cần so sánh.
+    \item Đo thời gian chạy theo cùng một tiêu chuẩn và đơn vị ms.
+    \item Ghi nhận thêm số phép so sánh để hỗ trợ phân tích độ phức tạp thực nghiệm.
+    \item Tạo dữ liệu đầu vào theo từng loại để đảm bảo so sánh khách quan và nhất quán.
 \end{itemize}
 
-\subsection{Phạm vi và giả định}
+\subsection{Mục tiêu phân tích}
 
-Bài làm sử dụng trực tiếp dữ liệu đo hiệu năng đã được cung cấp trong thư mục \texttt{results}.
-Không chạy lại benchmark và không phát sinh dữ liệu mới ngoài bộ dữ liệu đã có.
-
-\subsection{Câu hỏi phân tích}
-
-Các biểu đồ trong báo cáo trả lời các câu hỏi sau:
+Các mục tiêu chính của báo cáo gồm:
 \begin{itemize}[leftmargin=1.2cm]
-    \item Thuật toán nào nhanh hơn theo từng mốc $n$ và từng kiểu dữ liệu?
-    \item Sự khác biệt giữa các thuật toán thay đổi như thế nào khi chuyển từ linear sang log-$y$?
-    \item Tại sao một số thuật toán có lợi thế rõ rệt trên dữ liệu đặc thù (nearly sorted, many duplicates)?
+    \item So sánh hiệu năng giữa ba thuật toán theo kích thước đầu vào $n$.
+    \item Đối chiếu kết luận trên hai hệ trục: \textbf{tuyến tính} và \textbf{log trên trục $y$}.
+    \item Rút ra insight theo từng kiểu dữ liệu, đặc biệt ở mốc kích thước lớn.
+    \item Đánh giá chất lượng kỹ thuật trực quan hóa dùng trong báo cáo.
 \end{itemize}
+
+\subsection{Phạm vi bài làm}
+
+Bài làm sử dụng kết quả thực nghiệm đã đo được từ chương trình C++ do tôi xây dựng.
+Các kết quả này được lưu trong bộ tệp \texttt{results} và là nguồn dữ liệu duy nhất cho phần trực quan hóa.

@@ -1,8 +1,23 @@
-\section{Nguồn dữ liệu và pipeline xử lý}
+\section{Thiết kế dữ liệu thực nghiệm}
 
-\subsection{Nguồn dữ liệu}
+\subsection{Không gian thực nghiệm}
 
-Dữ liệu được nạp từ bốn tệp kết quả Excel:
+Ba thuật toán được so sánh trên cùng một tập kích thước:
+\[
+    n \in \{100, 1000, 10000, 100000\}
+\]
+
+Bốn kiểu dữ liệu đầu vào được tạo để phản ánh các tình huống thường gặp khi sắp xếp:
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{Random}: dữ liệu ngẫu nhiên, đại diện trường hợp tổng quát.
+    \item \textbf{Reversed}: dữ liệu đảo ngược hoàn toàn, bất lợi cho các thuật toán nhạy thứ tự đầu vào.
+    \item \textbf{Nearly Sorted}: dữ liệu gần sắp xếp, phù hợp kiểm tra trường hợp thuận lợi.
+    \item \textbf{Many Duplicates}: dữ liệu có nhiều phần tử trùng, phù hợp đánh giá thuật toán dựa theo miền giá trị.
+\end{itemize}
+
+\subsection{Nguồn dữ liệu lưu trữ}
+
+Kết quả đo được lưu trong bốn tệp:
 \begin{itemize}[leftmargin=1.2cm]
     \item \texttt{results/random.xlsx}
     \item \texttt{results/reverse.xlsx}
@@ -10,47 +25,94 @@ Dữ liệu được nạp từ bốn tệp kết quả Excel:
     \item \texttt{results/many\_duplicates.xlsx}
 \end{itemize}
 
-Mỗi tệp chứa kết quả cho ba thuật toán trên các kích thước đầu vào:
-\[
-    n \in \{100, 1000, 10000, 100000\}
-\]
-
-\subsection{Schema chuẩn hóa}
-
-Do dữ liệu gốc ở dạng bảng trình bày, pipeline chuyển về dạng tidy để phân tích và vẽ:
-\begin{table}[H]
-\centering
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{lll}
-\toprule
-\textbf{Cột} & \textbf{Kiểu dữ liệu} & \textbf{Ý nghĩa} \\
-\midrule
-\texttt{input\_type} & category & Kiểu dữ liệu đầu vào \\
-\texttt{algorithm} & category & Tên thuật toán \\
-\texttt{n} & integer & Kích thước đầu vào \\
-\texttt{time\_ms} & float & Thời gian chạy (ms) \\
-\texttt{comparisons} & float/optional & Số phép so sánh (nếu có) \\
-\bottomrule
-\end{tabular}
-\caption{Schema dữ liệu chuẩn hóa dùng cho trực quan hóa}
-\label{tab:tidy-schema}
-\end{table}
-
-\subsection{Pipeline tạo figure}
-
-Pipeline được triển khai trong mã nguồn \texttt{build\_figures.py} với các bước:
-\begin{enumerate}[leftmargin=1.2cm]
-    \item Đọc và parse các tệp Excel theo từng kiểu dữ liệu.
-    \item Chuẩn hóa tên thuật toán, thứ tự category và nhãn biểu đồ.
-    \item Sinh bảng \texttt{tidy\_results.csv} và \texttt{summary\_time\_ms.csv}.
-    \item Vẽ và xuất figure dưới dạng raster (PNG) và vector (PDF, SVG).
-\end{enumerate}
-
-\subsection{Đảm bảo tính nhất quán}
-
-Để so sánh công bằng giữa các biểu đồ, bài làm cố định các yếu tố sau:
+Mỗi bản ghi có hai chỉ số chính:
 \begin{itemize}[leftmargin=1.2cm]
-    \item Cùng bảng màu, marker và thứ tự thuật toán trên mọi figure.
-    \item Cùng mốc trục $x$ theo $n$ và cùng chú giải (legend) nhất quán.
-    \item Cùng đơn vị đo thời gian là millisecond (ms).
+    \item \textbf{time\_ms}: thời gian chạy (ms).
+    \item \textbf{comparisons}: số phép so sánh ghi nhận trong lúc chạy.
+\end{itemize}
+
+\subsection{Bảng dữ liệu thực nghiệm chi tiết}
+
+\begin{center}
+\scriptsize
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\begin{longtable}{llrrr}
+\caption{Toàn bộ dữ liệu thực nghiệm dùng để vẽ biểu đồ (time\_ms và comparisons)}\label{tab:raw-benchmark-data}\\
+\toprule
+\textbf{Input type} & \textbf{Algorithm} & \textbf{n} & \textbf{Time (ms)} & \textbf{Comparisons} \\
+\midrule
+\endfirsthead
+
+\multicolumn{5}{c}{\tablename\ \thetable{} -- tiếp theo}\\
+\toprule
+\textbf{Input type} & \textbf{Algorithm} & \textbf{n} & \textbf{Time (ms)} & \textbf{Comparisons} \\
+\midrule
+\endhead
+
+\bottomrule
+\endfoot
+
+Random & Insertion Sort & 100 & 0.002628 & 4687 \\
+Random & Insertion Sort & 1000 & 0.220626 & 491668 \\
+Random & Insertion Sort & 10000 & 20.755300 & 49597352 \\
+Random & Insertion Sort & 100000 & 1732.028900 & 4991463405 \\
+Random & Quick Sort & 100 & 0.001512 & 1812 \\
+Random & Quick Sort & 1000 & 0.025273 & 24513 \\
+Random & Quick Sort & 10000 & 0.661494 & 339662 \\
+Random & Quick Sort & 100000 & 7.538383 & 4408073 \\
+Random & Counting Sort & 100 & 0.000912 & 501 \\
+Random & Counting Sort & 1000 & 0.004243 & 5001 \\
+Random & Counting Sort & 10000 & 0.095392 & 50001 \\
+Random & Counting Sort & 100000 & 0.873323 & 499998 \\
+
+Reversed & Insertion Sort & 100 & 0.004718 & 10099 \\
+Reversed & Insertion Sort & 1000 & 0.438500 & 1000999 \\
+Reversed & Insertion Sort & 10000 & 37.287200 & 100009999 \\
+Reversed & Insertion Sort & 100000 & 3448.407000 & 10000099999 \\
+Reversed & Quick Sort & 100 & 0.001005 & 1221 \\
+Reversed & Quick Sort & 1000 & 0.019310 & 18679 \\
+Reversed & Quick Sort & 10000 & 0.224929 & 254764 \\
+Reversed & Quick Sort & 100000 & 2.510737 & 3219401 \\
+Reversed & Counting Sort & 100 & 0.000616 & 501 \\
+Reversed & Counting Sort & 1000 & 0.003556 & 5001 \\
+Reversed & Counting Sort & 10000 & 0.091470 & 50001 \\
+Reversed & Counting Sort & 100000 & 0.645531 & 500001 \\
+
+Nearly Sorted & Insertion Sort & 100 & 0.000889 & 1788 \\
+Nearly Sorted & Insertion Sort & 1000 & 0.006874 & 10410 \\
+Nearly Sorted & Insertion Sort & 10000 & 0.602749 & 1349234 \\
+Nearly Sorted & Insertion Sort & 100000 & 52.490200 & 129640926 \\
+Nearly Sorted & Quick Sort & 100 & 0.001254 & 1335 \\
+Nearly Sorted & Quick Sort & 1000 & 0.019360 & 18359 \\
+Nearly Sorted & Quick Sort & 10000 & 0.335387 & 296642 \\
+Nearly Sorted & Quick Sort & 100000 & 4.050336 & 4098232 \\
+Nearly Sorted & Counting Sort & 100 & 0.000701 & 501 \\
+Nearly Sorted & Counting Sort & 1000 & 0.004430 & 5001 \\
+Nearly Sorted & Counting Sort & 10000 & 0.092351 & 50001 \\
+Nearly Sorted & Counting Sort & 100000 & 0.645630 & 500001 \\
+
+Many Duplicates & Insertion Sort & 100 & 0.001324 & 2631 \\
+Many Duplicates & Insertion Sort & 1000 & 0.207072 & 475661 \\
+Many Duplicates & Insertion Sort & 10000 & 20.823100 & 49223559 \\
+Many Duplicates & Insertion Sort & 100000 & 1753.968100 & 4987704245 \\
+Many Duplicates & Quick Sort & 100 & 0.004977 & 5295 \\
+Many Duplicates & Quick Sort & 1000 & 0.055414 & 63521 \\
+Many Duplicates & Quick Sort & 10000 & 0.787152 & 712879 \\
+Many Duplicates & Quick Sort & 100000 & 8.948420 & 7948493 \\
+Many Duplicates & Counting Sort & 100 & 0.000947 & 403 \\
+Many Duplicates & Counting Sort & 1000 & 0.004484 & 4021 \\
+Many Duplicates & Counting Sort & 10000 & 0.035821 & 40201 \\
+Many Duplicates & Counting Sort & 100000 & 0.773004 & 402001 \\
+
+\end{longtable}
+\end{center}
+
+\subsection{Tóm tắt dữ liệu theo mục tiêu trực quan hóa}
+
+Từ bảng dữ liệu chi tiết ở Bảng \ref{tab:raw-benchmark-data}, có thể thấy ngay:
+\begin{itemize}[leftmargin=1.2cm]
+    \item Dải thời gian trải dài nhiều bậc độ lớn, phù hợp để dùng thêm log-$y$ khi trực quan.
+    \item Insertion Sort tăng rất mạnh ở $n=100000$, đặc biệt với Reversed và Many Duplicates.
+    \item Counting Sort giữ mức thời gian thấp và ổn định trong cả bốn kiểu dữ liệu.
 \end{itemize}

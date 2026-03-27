@@ -1,13 +1,42 @@
 \section{Thiết kế trực quan hóa}
 
-\subsection{Nguyên tắc trực quan áp dụng}
+\subsection{Mục tiêu truyền đạt của phần trực quan}
 
-Các figure được thiết kế theo các nguyên tắc:
+Vì đây là đồ án môn Data Visualization, nhóm chúng em thiết kế biểu đồ theo hướng
+\textbf{question-driven}: mỗi hình phải trả lời một câu hỏi phân tích rõ ràng, thay vì chỉ hiển thị dữ liệu.
+
+Các câu hỏi chính gồm:
 \begin{itemize}[leftmargin=1.2cm]
-    \item \textbf{Đúng nhiệm vụ phân tích:} line chart cho xu hướng theo $n$, bar chart cho so sánh snapshot tại $n$ lớn nhất.
-    \item \textbf{Nhất quán thị giác:} giữ nguyên màu và marker giữa các figure.
-    \item \textbf{Đọc được khi in:} độ tương phản cao, marker phân biệt rõ, lưới phụ ở mức vừa đủ.
-    \item \textbf{Không gây hiểu nhầm scale:} ghi rõ linear hay log scale ngay trong tiêu đề/trục.
+    \item Khi $n$ tăng, thứ hạng hiệu năng giữa ba thuật toán thay đổi như thế nào?
+    \item Kiểu dữ liệu đầu vào ảnh hưởng ra sao đến từng thuật toán?
+    \item Nếu dùng linear và log-$y$, người đọc nhận được góc nhìn khác nhau như thế nào?
+\end{itemize}
+
+\subsection{Bản đồ mã hóa thị giác (visual encoding map)}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{p{3.0cm}p{3.0cm}p{7.6cm}}
+\toprule
+\textbf{Biến dữ liệu} & \textbf{Kênh mã hóa} & \textbf{Lý do lựa chọn} \\
+\midrule
+\texttt{n} & Vị trí trục $x$ & Biến liên tục theo thứ tự tăng, phù hợp thể hiện xu hướng theo kích thước đầu vào. \\
+\texttt{time\_ms} & Vị trí trục $y$ & Kênh vị trí cho độ chính xác đọc cao nhất khi so sánh định lượng. \\
+\texttt{algorithm} & Màu + marker + legend & Tăng khả năng phân biệt đường dữ liệu, vẫn đọc được khi in đen trắng nhờ marker. \\
+\texttt{input\_type} & Facet (small multiples) & Tách ngữ cảnh từng loại dữ liệu, tránh chồng lấn nhiều đường trong một panel duy nhất. \\
+\bottomrule
+\end{tabular}
+\caption{Ánh xạ biến dữ liệu sang kênh thị giác}
+\label{tab:visual-encoding-map}
+\end{table}
+
+\subsection{Lý do chọn từng loại biểu đồ}
+
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{Line chart + faceting} cho phép theo dõi xu hướng theo $n$ và so sánh hành vi thuật toán theo từng kiểu dữ liệu trong cùng một ngôn ngữ trực quan.
+    \item \textbf{Grouped bar chart tại $n=100000$} đóng vai trò "snapshot quyết định" ở tải lớn nhất, giúp kết luận nhanh khi so sánh thực dụng.
+    \item \textbf{Biểu đồ comparisons (log-log)} là hình phụ trợ để đối chiếu giữa thời gian chạy và độ phức tạp thực nghiệm.
 \end{itemize}
 
 \subsection{Danh mục figure chính}
@@ -15,18 +44,38 @@ Các figure được thiết kế theo các nguyên tắc:
 \begin{table}[H]
 \centering
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{p{4.3cm}p{2.6cm}p{6.8cm}}
+\begin{tabular}{p{4.4cm}p{2.3cm}p{6.8cm}}
 \toprule
-\textbf{Figure} & \textbf{Scale} & \textbf{Mục đích} \\
+\textbf{Figure} & \textbf{Scale} & \textbf{Mục tiêu đọc hiểu} \\
 \midrule
-\texttt{figure\_01\_time\_linear} & Linear-$y$ & Thể hiện mức chênh lệch tuyệt đối thời gian chạy. \\
-\texttt{figure\_02\_time\_logy} & Log-$y$ & Làm rõ xu hướng tăng và khác biệt tốc độ tăng giữa thuật toán. \\
-\texttt{figure\_03\_time\_bar\_nmax\_logy} & Log-$y$ & So sánh trực tiếp ba thuật toán tại $n$ lớn nhất theo từng kiểu dữ liệu. \\
-\texttt{figure\_04\_comparisons\_loglog} & Log-log & Quan sát số phép so sánh (phân tích phụ trợ). \\
+\texttt{figure\_01\_time\_linear} & Linear-$y$ & Nhìn chênh lệch tuyệt đối về thời gian, đặc biệt ở vùng giá trị lớn. \\
+\texttt{figure\_02\_time\_logy} & Log-$y$ & So sánh tốc độ tăng tương đối, tránh nén dữ liệu của thuật toán nhanh. \\
+\texttt{figure\_03\_time\_bar\_nmax\_logy} & Log-$y$ & So sánh trực tiếp ba thuật toán tại $n$ lớn nhất theo từng input type. \\
+\texttt{figure\_04\_comparisons\_loglog} & Log-log & Kiểm tra xu hướng số phép so sánh theo bậc độ lớn của $n$. \\
 \bottomrule
 \end{tabular}
-\caption{Bộ figure được dùng trong báo cáo}
+\caption{Bộ figure dùng cho phân tích chính và phụ trợ}
 \label{tab:figure-catalog}
+\end{table}
+
+\subsection{Tiêu chí chất lượng trực quan và cách nhóm thực hiện}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{p{3.3cm}p{7.9cm}p{2.3cm}}
+\toprule
+\textbf{Tiêu chí} & \textbf{Cách áp dụng trong báo cáo} & \textbf{Mức độ} \\
+\midrule
+Tính chính xác & Trục có đơn vị rõ ràng, scale được ghi ngay trong tiêu đề/caption, không cắt trục gây hiểu sai. & Đạt \\
+Tính nhất quán & Cố định màu, marker, thứ tự thuật toán và thứ tự input type trên mọi figure. & Đạt \\
+Khả năng đọc & Legend đặt ngoài vùng dữ liệu, giảm chồng lấn; lưới chỉ dùng mức vừa phải để hỗ trợ đọc giá trị. & Đạt \\
+Khả năng in/zoom & Xuất cả PNG và vector (PDF/SVG), đảm bảo sắc nét khi phóng lớn trong PDF/slide. & Đạt \\
+Khả năng tiếp cận & Không phụ thuộc màu đơn thuần; kết hợp marker và nhãn để nhận diện series. & Đạt \\
+\bottomrule
+\end{tabular}
+\caption{Checklist chất lượng trực quan hóa theo tiêu chí môn học}
+\label{tab:viz-quality-checklist}
 \end{table}
 
 \subsection{Hình minh họa chính}
@@ -34,27 +83,36 @@ Các figure được thiết kế theo các nguyên tắc:
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.98\textwidth]{../figures/figure_01_time_linear.pdf}
-    \caption{Hiệu năng sắp xếp theo từng kiểu dữ liệu với trục $y$ tuyến tính.}
+    \caption{Hiệu năng sắp xếp theo từng kiểu dữ liệu với trục $y$ tuyến tính. Hình này ưu tiên đọc chênh lệch thời gian tuyệt đối giữa các thuật toán.}
     \label{fig:time-linear}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.98\textwidth]{../figures/figure_02_time_logy.pdf}
-    \caption{Hiệu năng sắp xếp theo từng kiểu dữ liệu với trục $y$ log.}
+    \caption{Hiệu năng sắp xếp theo từng kiểu dữ liệu với trục $y$ log. Hình này nhấn mạnh khác biệt tương đối và tốc độ tăng theo bậc độ lớn.}
     \label{fig:time-logy}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{../figures/figure_03_time_bar_nmax_logy.pdf}
-    \caption{So sánh thời gian chạy tại $n=100000$ giữa các kiểu dữ liệu.}
+    \caption{So sánh thời gian chạy tại $n=100000$ giữa các kiểu dữ liệu. Đây là hình "snapshot" phục vụ kết luận ở tải lớn nhất.}
     \label{fig:bar-nmax}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{../figures/figure_04_comparisons_loglog.pdf}
-    \caption{Biểu đồ phụ trợ số phép so sánh trên thang log-log.}
+    \caption{Biểu đồ phụ trợ số phép so sánh trên thang log-log, dùng để kiểm tra tính hợp lý của xu hướng thời gian chạy.}
     \label{fig:comparisons}
 \end{figure}
+
+\subsection{Các lỗi trực quan đã chủ động tránh}
+
+\begin{itemize}[leftmargin=1.2cm]
+    \item Không đặt legend chồng lên vùng dữ liệu.
+    \item Không sử dụng một biểu đồ duy nhất cho cả 4 input type vì dễ rối và khó đọc.
+    \item Không chỉ dùng linear scale khi dữ liệu trải dài nhiều bậc độ lớn.
+    \item Không dùng màu sắc thiếu tương phản hoặc phụ thuộc màu duy nhất để phân biệt thuật toán.
+\end{itemize}
