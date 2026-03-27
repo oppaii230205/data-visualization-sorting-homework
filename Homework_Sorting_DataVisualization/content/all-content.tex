@@ -1,0 +1,305 @@
+\section{Giới thiệu và mục tiêu}
+
+Bài báo cáo này trình bày trực quan hóa hiệu năng của ba thuật toán sắp xếp điển hình gồm \textbf{Insertion Sort}, \textbf{Quick Sort} và \textbf{Counting Sort} trên bốn kiểu dữ liệu đầu vào:
+\begin{itemize}[leftmargin=1.2cm]
+    \item Random.
+    \item Reversed.
+    \item Nearly Sorted.
+    \item Many Duplicates.
+\end{itemize}
+
+Mục tiêu chính của bài là:
+\begin{itemize}[leftmargin=1.2cm]
+    \item Xây dựng các biểu đồ đúng chuẩn trực quan hóa dữ liệu để so sánh thuật toán theo kích thước đầu vào $n$.
+    \item So sánh và phân tích khác biệt khi dùng \textbf{thang tuyến tính} và \textbf{thang log trên trục $y$}.
+    \item Rút ra insight về hành vi thuật toán theo từng đặc trưng dữ liệu.
+    \item Đánh giá các kỹ thuật trực quan được sử dụng và lý do lựa chọn.
+\end{itemize}
+
+\subsection{Phạm vi và giả định}
+
+Bài làm sử dụng trực tiếp dữ liệu đo hiệu năng đã được cung cấp trong thư mục \texttt{results}.
+Không chạy lại benchmark và không phát sinh dữ liệu mới ngoài bộ dữ liệu đã có.
+
+\subsection{Câu hỏi phân tích}
+
+Các biểu đồ trong báo cáo trả lời các câu hỏi sau:
+\begin{itemize}[leftmargin=1.2cm]
+    \item Thuật toán nào nhanh hơn theo từng mốc $n$ và từng kiểu dữ liệu?
+    \item Sự khác biệt giữa các thuật toán thay đổi như thế nào khi chuyển từ linear sang log-$y$?
+    \item Tại sao một số thuật toán có lợi thế rõ rệt trên dữ liệu đặc thù (nearly sorted, many duplicates)?
+\end{itemize}
+
+\section{Nguồn dữ liệu và pipeline xử lý}
+
+\subsection{Nguồn dữ liệu}
+
+Dữ liệu được nạp từ bốn tệp kết quả Excel:
+\begin{itemize}[leftmargin=1.2cm]
+    \item \texttt{results/random.xlsx}
+    \item \texttt{results/reverse.xlsx}
+    \item \texttt{results/nearly-sorted.xlsx}
+    \item \texttt{results/many\_duplicates.xlsx}
+\end{itemize}
+
+Mỗi tệp chứa kết quả cho ba thuật toán trên các kích thước đầu vào:
+\[
+    n \in \{100, 1000, 10000, 100000\}
+\]
+
+\subsection{Schema chuẩn hóa}
+
+Do dữ liệu gốc ở dạng bảng trình bày, pipeline chuyển về dạng tidy để phân tích và vẽ:
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lll}
+\toprule
+\textbf{Cột} & \textbf{Kiểu dữ liệu} & \textbf{Ý nghĩa} \\
+\midrule
+\texttt{input\_type} & category & Kiểu dữ liệu đầu vào \\
+\texttt{algorithm} & category & Tên thuật toán \\
+\texttt{n} & integer & Kích thước đầu vào \\
+\texttt{time\_ms} & float & Thời gian chạy (ms) \\
+\texttt{comparisons} & float/optional & Số phép so sánh (nếu có) \\
+\bottomrule
+\end{tabular}
+\caption{Schema dữ liệu chuẩn hóa dùng cho trực quan hóa}
+\label{tab:tidy-schema}
+\end{table}
+
+\subsection{Pipeline tạo figure}
+
+Pipeline được triển khai trong mã nguồn \texttt{build\_figures.py} với các bước:
+\begin{enumerate}[leftmargin=1.2cm]
+    \item Đọc và parse các tệp Excel theo từng kiểu dữ liệu.
+    \item Chuẩn hóa tên thuật toán, thứ tự category và nhãn biểu đồ.
+    \item Sinh bảng \texttt{tidy\_results.csv} và \texttt{summary\_time\_ms.csv}.
+    \item Vẽ và xuất figure dưới dạng raster (PNG) và vector (PDF, SVG).
+\end{enumerate}
+
+\subsection{Đảm bảo tính nhất quán}
+
+Để so sánh công bằng giữa các biểu đồ, bài làm cố định các yếu tố sau:
+\begin{itemize}[leftmargin=1.2cm]
+    \item Cùng bảng màu, marker và thứ tự thuật toán trên mọi figure.
+    \item Cùng mốc trục $x$ theo $n$ và cùng chú giải (legend) nhất quán.
+    \item Cùng đơn vị đo thời gian là millisecond (ms).
+\end{itemize}
+
+\section{Thiết kế trực quan hóa}
+
+\subsection{Nguyên tắc trực quan áp dụng}
+
+Các figure được thiết kế theo các nguyên tắc:
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{Đúng nhiệm vụ phân tích:} line chart cho xu hướng theo $n$, bar chart cho so sánh snapshot tại $n$ lớn nhất.
+    \item \textbf{Nhất quán thị giác:} giữ nguyên màu và marker giữa các figure.
+    \item \textbf{Đọc được khi in:} độ tương phản cao, marker phân biệt rõ, lưới phụ ở mức vừa đủ.
+    \item \textbf{Không gây hiểu nhầm scale:} ghi rõ linear hay log scale ngay trong tiêu đề/trục.
+\end{itemize}
+
+\subsection{Danh mục figure chính}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{p{4.3cm}p{2.6cm}p{6.8cm}}
+\toprule
+\textbf{Figure} & \textbf{Scale} & \textbf{Mục đích} \\
+\midrule
+\texttt{figure\_01\_time\_linear} & Linear-$y$ & Thể hiện mức chênh lệch tuyệt đối thời gian chạy. \\
+\texttt{figure\_02\_time\_logy} & Log-$y$ & Làm rõ xu hướng tăng và khác biệt tốc độ tăng giữa thuật toán. \\
+\texttt{figure\_03\_time\_bar\_nmax\_logy} & Log-$y$ & So sánh trực tiếp ba thuật toán tại $n$ lớn nhất theo từng kiểu dữ liệu. \\
+\texttt{figure\_04\_comparisons\_loglog} & Log-log & Quan sát số phép so sánh (phân tích phụ trợ). \\
+\bottomrule
+\end{tabular}
+\caption{Bộ figure được dùng trong báo cáo}
+\label{tab:figure-catalog}
+\end{table}
+
+\subsection{Hình minh họa chính}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.98\textwidth]{../figures/figure_01_time_linear.pdf}
+    \caption{Hiệu năng sắp xếp theo từng kiểu dữ liệu với trục $y$ tuyến tính.}
+    \label{fig:time-linear}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.98\textwidth]{../figures/figure_02_time_logy.pdf}
+    \caption{Hiệu năng sắp xếp theo từng kiểu dữ liệu với trục $y$ log.}
+    \label{fig:time-logy}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../figures/figure_03_time_bar_nmax_logy.pdf}
+    \caption{So sánh thời gian chạy tại $n=100000$ giữa các kiểu dữ liệu.}
+    \label{fig:bar-nmax}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../figures/figure_04_comparisons_loglog.pdf}
+    \caption{Biểu đồ phụ trợ số phép so sánh trên thang log-log.}
+    \label{fig:comparisons}
+\end{figure}
+
+\section{Kết quả và insight từ biểu đồ}
+
+\subsection{Nhận xét tổng quan}
+
+Từ Hình \ref{fig:time-linear} và Hình \ref{fig:time-logy}, có thể quan sát xu hướng chung:
+\begin{itemize}[leftmargin=1.2cm]
+    \item Insertion Sort tăng rất nhanh khi $n$ tăng và trở thành thuật toán chậm nhất ở $n$ lớn.
+    \item Quick Sort duy trì hiệu năng tốt trên hầu hết kiểu dữ liệu.
+    \item Counting Sort có thời gian chạy thấp và ổn định nhất trong bộ dữ liệu hiện tại.
+\end{itemize}
+
+\subsection{Insight theo từng kiểu dữ liệu}
+
+\textbf{Random:}
+\begin{itemize}[leftmargin=1.2cm]
+    \item Chênh lệch giữa Insertion Sort và hai thuật toán còn lại tăng mạnh khi $n$ lớn.
+    \item Quick Sort giữ được ưu thế rõ rệt so với Insertion Sort.
+\end{itemize}
+
+\textbf{Reversed:}
+\begin{itemize}[leftmargin=1.2cm]
+    \item Đây là trường hợp bất lợi cho Insertion Sort, thể hiện mức tăng thời gian rất lớn ở $n=100000$.
+    \item Quick Sort và Counting Sort ít bị ảnh hưởng hơn.
+\end{itemize}
+
+\textbf{Nearly Sorted:}
+\begin{itemize}[leftmargin=1.2cm]
+    \item Insertion Sort cải thiện đáng kể so với hai kiểu dữ liệu khó hơn (Random, Reversed).
+    \item Dù vậy, ở $n$ rất lớn, Quick Sort và Counting Sort vẫn có lợi thế thời gian.
+\end{itemize}
+
+\textbf{Many Duplicates:}
+\begin{itemize}[leftmargin=1.2cm]
+    \item Counting Sort đặc biệt phù hợp khi dữ liệu có nhiều giá trị lặp.
+    \item Khoảng cách giữa Counting Sort và Insertion Sort trở nên rõ ràng ở mốc $n$ lớn.
+\end{itemize}
+
+\subsection{Insight tại mốc $n$ lớn nhất}
+
+Hình \ref{fig:bar-nmax} cho thấy bức tranh "áp lực tải" tại $n=100000$:
+\begin{itemize}[leftmargin=1.2cm]
+    \item Insertion Sort có chi phí cao vượt trội so với hai thuật toán còn lại.
+    \item Quick Sort là lựa chọn cân bằng tốt giữa các kiểu dữ liệu.
+    \item Counting Sort giữ mức thời gian thấp nhất trong tập dữ liệu đo hiện tại.
+\end{itemize}
+
+\subsection{Bảng tổng hợp kết luận chính}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{p{3.5cm}p{9.5cm}}
+\toprule
+\textbf{Khía cạnh} & \textbf{Kết luận chính} \\
+\midrule
+Tốc độ tổng thể & Counting Sort và Quick Sort vượt trội so với Insertion Sort ở $n$ lớn. \\
+Độ nhạy dữ liệu & Insertion Sort nhạy với dữ liệu khó (đặc biệt reversed); Counting Sort ổn định trong bộ dữ liệu có nhiều trùng lặp. \\
+Giá trị của log-$y$ & Log-$y$ giúp nhìn rõ khác biệt tương đối và xu hướng tăng của từng thuật toán. \\
+\bottomrule
+\end{tabular}
+\caption{Top insight tóm tắt từ các biểu đồ}
+\label{tab:top-insights}
+\end{table}
+
+\section{Thảo luận về scale tuyến tính và phi tuyến}
+
+\subsection{Vì sao cần cả hai loại scale}
+
+\textbf{Linear scale} phù hợp để đọc chênh lệch tuyệt đối về thời gian chạy (đơn vị ms).
+Tuy nhiên khi một thuật toán lớn vượt trội, các đường còn lại dễ bị nén sát trục và khó quan sát.
+
+\textbf{Log-$y$ scale} giúp:
+\begin{itemize}[leftmargin=1.2cm]
+    \item Giảm hiện tượng nén dữ liệu khi khoảng giá trị quá rộng.
+    \item Làm rõ tốc độ tăng tương đối giữa các thuật toán.
+    \item Dễ quan sát xu hướng trên nhiều bậc độ lớn.
+\end{itemize}
+
+\subsection{Nguyên tắc diễn giải đúng trên log scale}
+
+Khi đọc Hình \ref{fig:time-logy}, cần lưu ý:
+\begin{itemize}[leftmargin=1.2cm]
+    \item Khoảng cách theo trục $y$ thể hiện tỷ lệ nhân, không phải chênh lệch cộng tuyến tính.
+    \item Độ dốc trên log scale phản ánh mức tăng theo bậc độ lớn.
+    \item Kết luận cuối cùng nên đối chiếu cả Hình \ref{fig:time-linear} và Hình \ref{fig:time-logy}.
+\end{itemize}
+
+\subsection{Đánh giá kỹ thuật trực quan đã sử dụng}
+
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{Faceting theo input type:} giảm nhiễu khi so sánh nhiều kiểu dữ liệu cùng lúc.
+    \item \textbf{Màu + marker nhất quán:} hỗ trợ theo dõi cùng thuật toán xuyên suốt các hình.
+    \item \textbf{Legend đặt ngoài vùng dữ liệu:} tránh che khuất đường hoặc cột.
+    \item \textbf{Bản vector (PDF/SVG):} giữ độ sắc nét khi phóng to trong báo cáo và trình chiếu.
+\end{itemize}
+
+\section{Kết luận và hướng phát triển}
+
+\subsection{Kết luận}
+
+Báo cáo đã xây dựng pipeline trực quan hóa hoàn chỉnh từ dữ liệu kết quả có sẵn và tạo bộ figure phục vụ phân tích chuyên sâu.
+Hai góc nhìn scale tuyến tính và log-$y$ bổ trợ lẫn nhau:
+\begin{itemize}[leftmargin=1.2cm]
+    \item Linear scale giúp đọc mức thời gian tuyệt đối.
+    \item Log-$y$ giúp đọc khác biệt tương đối và xu hướng tăng theo bậc độ lớn.
+\end{itemize}
+
+Trên bộ dữ liệu đo hiện tại, Quick Sort và Counting Sort có hiệu năng tốt hơn Insertion Sort ở kích thước lớn;
+đồng thời Counting Sort đặc biệt phù hợp với dữ liệu nhiều phần tử trùng lặp.
+
+\subsection{Giới hạn}
+
+\begin{itemize}[leftmargin=1.2cm]
+    \item Dữ liệu sử dụng là tập kết quả có sẵn, không mở rộng thêm cấu hình phần cứng hay số lần chạy.
+    \item Kết luận phụ thuộc vào bộ input type và dải giá trị đã đo trong bài.
+\end{itemize}
+
+\subsection{Hướng phát triển}
+
+\begin{itemize}[leftmargin=1.2cm]
+    \item Bổ sung benchmark trên nhiều môi trường chạy khác nhau để tăng tính khái quát.
+    \item Mở rộng thêm thuật toán (Merge Sort, Heap Sort, Radix Sort) để so sánh đa chiều hơn.
+    \item Bổ sung các chỉ số mở rộng như memory usage, cache behavior hoặc throughput.
+\end{itemize}
+
+\newpage
+\addcontentsline{toc}{section}{Tài liệu tham khảo}
+\begin{thebibliography}{99}
+
+\bibitem{cormen2009}
+Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, and Clifford Stein.
+\newblock \textit{Introduction to Algorithms} (3rd ed.).
+\newblock MIT Press, 2009.
+
+\bibitem{knuth1998}
+Donald E. Knuth.
+\newblock \textit{The Art of Computer Programming, Volume 3: Sorting and Searching} (2nd ed.).
+\newblock Addison-Wesley, 1998.
+
+\bibitem{wilke2019}
+Claus O. Wilke.
+\newblock \textit{Fundamentals of Data Visualization}.
+\newblock O'Reilly Media, 2019.
+
+\bibitem{seaborn}
+Michael Waskom.
+\newblock seaborn: statistical data visualization.
+\newblock \url{https://seaborn.pydata.org/}
+
+\bibitem{matplotlib}
+John D. Hunter et al.
+\newblock Matplotlib: Visualization with Python.
+\newblock \url{https://matplotlib.org/}
+
+\end{thebibliography}

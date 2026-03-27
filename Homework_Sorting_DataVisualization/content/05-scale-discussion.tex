@@ -1,0 +1,31 @@
+\section{Thảo luận về scale tuyến tính và phi tuyến}
+
+\subsection{Vì sao cần cả hai loại scale}
+
+\textbf{Linear scale} phù hợp để đọc chênh lệch tuyệt đối về thời gian chạy (đơn vị ms).
+Tuy nhiên khi một thuật toán lớn vượt trội, các đường còn lại dễ bị nén sát trục và khó quan sát.
+
+\textbf{Log-$y$ scale} giúp:
+\begin{itemize}[leftmargin=1.2cm]
+    \item Giảm hiện tượng nén dữ liệu khi khoảng giá trị quá rộng.
+    \item Làm rõ tốc độ tăng tương đối giữa các thuật toán.
+    \item Dễ quan sát xu hướng trên nhiều bậc độ lớn.
+\end{itemize}
+
+\subsection{Nguyên tắc diễn giải đúng trên log scale}
+
+Khi đọc Hình \ref{fig:time-logy}, cần lưu ý:
+\begin{itemize}[leftmargin=1.2cm]
+    \item Khoảng cách theo trục $y$ thể hiện tỷ lệ nhân, không phải chênh lệch cộng tuyến tính.
+    \item Độ dốc trên log scale phản ánh mức tăng theo bậc độ lớn.
+    \item Kết luận cuối cùng nên đối chiếu cả Hình \ref{fig:time-linear} và Hình \ref{fig:time-logy}.
+\end{itemize}
+
+\subsection{Đánh giá kỹ thuật trực quan đã sử dụng}
+
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{Faceting theo input type:} giảm nhiễu khi so sánh nhiều kiểu dữ liệu cùng lúc.
+    \item \textbf{Màu + marker nhất quán:} hỗ trợ theo dõi cùng thuật toán xuyên suốt các hình.
+    \item \textbf{Legend đặt ngoài vùng dữ liệu:} tránh che khuất đường hoặc cột.
+    \item \textbf{Bản vector (PDF/SVG):} giữ độ sắc nét khi phóng to trong báo cáo và trình chiếu.
+\end{itemize}

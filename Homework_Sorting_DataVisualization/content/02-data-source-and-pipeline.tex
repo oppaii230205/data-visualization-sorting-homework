@@ -1,0 +1,56 @@
+\section{Nguồn dữ liệu và pipeline xử lý}
+
+\subsection{Nguồn dữ liệu}
+
+Dữ liệu được nạp từ bốn tệp kết quả Excel:
+\begin{itemize}[leftmargin=1.2cm]
+    \item \texttt{results/random.xlsx}
+    \item \texttt{results/reverse.xlsx}
+    \item \texttt{results/nearly-sorted.xlsx}
+    \item \texttt{results/many\_duplicates.xlsx}
+\end{itemize}
+
+Mỗi tệp chứa kết quả cho ba thuật toán trên các kích thước đầu vào:
+\[
+    n \in \{100, 1000, 10000, 100000\}
+\]
+
+\subsection{Schema chuẩn hóa}
+
+Do dữ liệu gốc ở dạng bảng trình bày, pipeline chuyển về dạng tidy để phân tích và vẽ:
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lll}
+\toprule
+\textbf{Cột} & \textbf{Kiểu dữ liệu} & \textbf{Ý nghĩa} \\
+\midrule
+\texttt{input\_type} & category & Kiểu dữ liệu đầu vào \\
+\texttt{algorithm} & category & Tên thuật toán \\
+\texttt{n} & integer & Kích thước đầu vào \\
+\texttt{time\_ms} & float & Thời gian chạy (ms) \\
+\texttt{comparisons} & float/optional & Số phép so sánh (nếu có) \\
+\bottomrule
+\end{tabular}
+\caption{Schema dữ liệu chuẩn hóa dùng cho trực quan hóa}
+\label{tab:tidy-schema}
+\end{table}
+
+\subsection{Pipeline tạo figure}
+
+Pipeline được triển khai trong mã nguồn \texttt{build\_figures.py} với các bước:
+\begin{enumerate}[leftmargin=1.2cm]
+    \item Đọc và parse các tệp Excel theo từng kiểu dữ liệu.
+    \item Chuẩn hóa tên thuật toán, thứ tự category và nhãn biểu đồ.
+    \item Sinh bảng \texttt{tidy\_results.csv} và \texttt{summary\_time\_ms.csv}.
+    \item Vẽ và xuất figure dưới dạng raster (PNG) và vector (PDF, SVG).
+\end{enumerate}
+
+\subsection{Đảm bảo tính nhất quán}
+
+Để so sánh công bằng giữa các biểu đồ, bài làm cố định các yếu tố sau:
+\begin{itemize}[leftmargin=1.2cm]
+    \item Cùng bảng màu, marker và thứ tự thuật toán trên mọi figure.
+    \item Cùng mốc trục $x$ theo $n$ và cùng chú giải (legend) nhất quán.
+    \item Cùng đơn vị đo thời gian là millisecond (ms).
+\end{itemize}
