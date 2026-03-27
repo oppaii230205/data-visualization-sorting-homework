@@ -1,31 +1,67 @@
 \section{Thảo luận về scale tuyến tính và phi tuyến}
 
-\subsection{Vì sao cần cả hai loại scale}
+\subsection{Vai trò bổ trợ giữa linear scale và log-$y$ scale}
 
-\textbf{Linear scale} phù hợp để đọc chênh lệch tuyệt đối về thời gian chạy (đơn vị ms).
-Tuy nhiên khi một thuật toán lớn vượt trội, các đường còn lại dễ bị nén sát trục và khó quan sát.
-
-\textbf{Log-$y$ scale} giúp:
+Nhóm chúng em không xem hai scale là hai phiên bản thay thế, mà là hai "ống kính" phục vụ hai câu hỏi khác nhau:
 \begin{itemize}[leftmargin=1.2cm]
-    \item Giảm hiện tượng nén dữ liệu khi khoảng giá trị quá rộng.
-    \item Làm rõ tốc độ tăng tương đối giữa các thuật toán.
-    \item Dễ quan sát xu hướng trên nhiều bậc độ lớn.
+    \item \textbf{Linear scale} trả lời câu hỏi về \textit{chi phí tuyệt đối}: thuật toán nào tốn thêm bao nhiêu ms trong thực tế.
+    \item \textbf{Log-$y$ scale} trả lời câu hỏi về \textit{cấu trúc tăng trưởng}: tốc độ tăng tương đối của từng thuật toán khi $n$ tăng.
 \end{itemize}
 
-\subsection{Nguyên tắc diễn giải đúng trên log scale}
+Trong bộ hình hiện tại, nếu chỉ nhìn linear thì hai thuật toán nhanh dễ bị dồn sát đáy (mất khả năng so sánh tinh),
+ngược lại nếu chỉ nhìn log-$y$ thì người đọc có thể đánh giá thiếu trực giác về chênh lệch ms tuyệt đối.
+Do đó, kết luận cuối cùng luôn được rút ra sau khi đối chiếu cả hai hình.
 
-Khi đọc Hình \ref{fig:time-logy}, cần lưu ý:
+\subsection{Nguyên tắc đọc đúng trên log-$y$ (tránh diễn giải sai)}
+
+Khi đọc Hình \ref{fig:time-logy}, nhóm chúng em áp dụng các quy tắc sau:
 \begin{itemize}[leftmargin=1.2cm]
-    \item Khoảng cách theo trục $y$ thể hiện tỷ lệ nhân, không phải chênh lệch cộng tuyến tính.
-    \item Độ dốc trên log scale phản ánh mức tăng theo bậc độ lớn.
-    \item Kết luận cuối cùng nên đối chiếu cả Hình \ref{fig:time-linear} và Hình \ref{fig:time-logy}.
+    \item Khoảng cách dọc bằng nhau trên trục $y$ log biểu thị \textbf{cùng tỷ lệ nhân}, không biểu thị cùng mức chênh cộng.
+    \item Độ dốc lớn hơn trên log-$y$ nghĩa là tốc độ tăng theo bậc độ lớn lớn hơn.
+    \item Không suy ra trực tiếp "chênh $x$ ms" từ log-$y$; chênh tuyệt đối phải quay lại linear scale hoặc bảng số liệu.
 \end{itemize}
 
-\subsection{Đánh giá kỹ thuật trực quan đã sử dụng}
+Từ các quy tắc này, log-$y$ được dùng để đọc cấu trúc, còn linear dùng để đọc mức độ tác động thực tế.
+
+\subsection{Các bẫy thị giác và cách nhóm kiểm soát}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{p{4.0cm}p{4.8cm}p{4.2cm}}
+\toprule
+\textbf{Bẫy thị giác} & \textbf{Rủi ro diễn giải} & \textbf{Cách kiểm soát trong báo cáo} \\
+\midrule
+Nén dữ liệu ở linear & Đường của thuật toán nhanh gần như trùng nhau, khó so sánh & Dùng thêm Hình \ref{fig:time-logy} để mở tách các đường nhanh \\
+Đọc sai log-$y$ như linear & Hiểu sai khoảng cách là chênh ms tuyệt đối & Ghi rõ "log scale" trong caption và đối chiếu chéo với Hình \ref{fig:time-linear} \\
+Chồng lấn chú giải & Che khuất dữ liệu, giảm khả năng đọc xu hướng & Đặt legend ngoài vùng dữ liệu \\
+Phụ thuộc màu đơn thuần & Khó đọc khi in xám hoặc người đọc mù màu một phần & Kết hợp màu + marker + thứ tự thuật toán cố định \\
+\bottomrule
+\end{tabular}
+\caption{Bẫy trực quan thường gặp và biện pháp kiểm soát}
+\label{tab:viz-pitfalls}
+\end{table}
+
+\subsection{Quy trình suy luận trực quan 4 bước mà nhóm áp dụng}
+
+Để đảm bảo insight không bị cảm tính, nhóm chúng em đọc hình theo quy trình cố định:
+\begin{enumerate}[leftmargin=1.2cm]
+    \item \textbf{Bước 1 - Đọc hình tổng thể (global pattern):} nhận diện thứ hạng và xu hướng chung trên từng panel.
+    \item \textbf{Bước 2 - Đọc theo scale phù hợp:} dùng linear để đánh giá tác động tuyệt đối, dùng log-$y$ để đọc cấu trúc tăng trưởng.
+    \item \textbf{Bước 3 - Đọc điểm quyết định:} dùng Hình \ref{fig:bar-nmax} tại $n=100000$ để kết luận theo góc nhìn triển khai thực tế.
+    \item \textbf{Bước 4 - Kiểm chứng chéo:} đối chiếu với Hình \ref{fig:comparisons} và bảng số liệu để xác thực insight.
+\end{enumerate}
+
+Quy trình này giúp giảm nguy cơ "ảo giác trực quan" khi dữ liệu có dải giá trị rộng.
+
+\subsection{Đánh giá hiệu quả các kỹ thuật trực quan đã dùng}
 
 \begin{itemize}[leftmargin=1.2cm]
-    \item \textbf{Faceting theo input type:} giảm nhiễu khi so sánh nhiều kiểu dữ liệu cùng lúc.
-    \item \textbf{Màu + marker nhất quán:} hỗ trợ theo dõi cùng thuật toán xuyên suốt các hình.
-    \item \textbf{Legend đặt ngoài vùng dữ liệu:} tránh che khuất đường hoặc cột.
-    \item \textbf{Bản vector (PDF/SVG):} giữ độ sắc nét khi phóng to trong báo cáo và trình chiếu.
+    \item \textbf{Faceting theo input type} giúp người đọc tách bối cảnh từng kiểu dữ liệu, tránh trộn tín hiệu.
+    \item \textbf{Màu + marker nhất quán} hỗ trợ theo dõi cùng một thuật toán xuyên suốt báo cáo.
+    \item \textbf{Legend ngoài vùng dữ liệu} cải thiện khả năng đọc và tránh che đường/cột.
+    \item \textbf{Xuất vector (PDF/SVG)} giúp giữ nguyên độ nét khi zoom, đặc biệt quan trọng khi chấm báo cáo PDF.
 \end{itemize}
+
+Tổng hợp lại, cách thiết kế hiện tại đáp ứng đồng thời ba mục tiêu của môn học:
+\textit{đúng dữ liệu} (accuracy), \textit{dễ đọc} (readability), và \textit{dễ diễn giải đúng} (interpretability).
