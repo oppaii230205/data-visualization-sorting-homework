@@ -1,0 +1,63 @@
+@article{greenwade93,
+    author  = "George D. Greenwade",
+    title   = "The {C}omprehensive {T}ex {A}rchive {N}etwork ({CTAN})",
+    year    = "1993",
+    journal = "TUGBoat",
+    volume  = "14",
+    number  = "3",
+    pages   = "342--351"
+}
+
+@online{mit_util_lab,
+  title        = {6.1810: Utilities Lab},
+  author       = {MIT PDOS},
+  year         = {2024},
+  url          = {https://pdos.csail.mit.edu/6.1810/2024/labs/util.html},
+  note         = {Accessed: 2025-11-13}
+}
+There could be several reasons why `ref.bib` and `ref.tex` are not working as expected. Here are some common issues and solutions:
+
+1. **File Path Issues**: Ensure that `ref.bib` and `ref.tex` are in the correct directory and that the paths are correctly specified in your LaTeX document.
+
+2. **Syntax Errors**: Check both files for syntax errors. In `ref.bib`, ensure that each entry is correctly formatted. In `ref.tex`, ensure that the `\bibliography{}` command correctly references your `.bib` file without the extension.
+
+3. **Compilation Sequence**: Make sure you are compiling your document with the correct sequence. Typically, you need to run `pdflatex`, then `bibtex`, and then `pdflatex` twice more to ensure all references are updated properly.
+
+4. **Encoding Issues**: Ensure that both files are saved with the correct encoding (usually UTF-8).
+
+5. **BibTeX/BibLaTeX Configuration**: Check if you are using BibTeX or BibLaTeX and ensure that your document is set up to use the correct package and commands accordingly.
+
+6. **Missing Packages**: Ensure all required packages are included in your LaTeX document preamble. For example, `\usepackage{natbib}` for BibTeX, or `\usepackage{biblatex}` for BibLaTeX.
+
+By checking these aspects, you can often resolve issues with bibliography files not working in LaTeX documents.
+@online{mit_lab_guidance,
+  title        = {6.1810: Lab Guidance},
+  author       = {MIT PDOS},
+  year         = {2024},
+  url          = {https://pdos.csail.mit.edu/6.1810/2024/labs/guidance.html},
+  note         = {Accessed: 2025-11-13}
+}
+
+@online{mit_gdb_slides,
+  title        = {GDB Tutorial Slides},
+  author       = {MIT PDOS},
+  year         = {2019},
+  url          = {https://pdos.csail.mit.edu/6.828/2019/lec/gdb_slides.pdf},
+  note         = {Accessed: 2025-11-13}
+}
+
+@misc{youtube_xv6_gdb,
+  title        = {Debugging xv6 with GDB},
+  author       = {MIT 6.1810 Staff},
+  year         = {2024},
+  howpublished = {\url{https://www.youtube.com/watch?v=64Cvc6o1cyE}},
+  note         = {Accessed: 2025-11-13}
+}
+
+@online{xv6_github_notes,
+  title        = {xv6-labs-2020: Lab 2 - System Calls},
+  author       = {whileskies},
+  year         = {2020},
+  url          = {https://github.com/whileskies/xv6-labs-2020/blob/main/doc/Lab2-system%20calls.md},
+  note         = {Accessed: 2025-11-13}
+}

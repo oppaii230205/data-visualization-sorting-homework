@@ -1,0 +1,56 @@
+\section{Mô tả dữ liệu}
+
+\textbf{Nguồn dữ liệu:} \href{https://www.kaggle.com/datasets/janiobachmann/bank-marketing-dataset}{Bank marketing dataset}
+
+
+Bộ dữ liệu được sử dụng trong bài toán phân loại khách hàng đăng ký tiền gửi có kỳ hạn (\textit{deposit}). 
+Dữ liệu bao gồm các thông tin về đặc điểm cá nhân của khách hàng, thông tin liên hệ trong chiến dịch marketing, 
+cũng như lịch sử tương tác trước đó. 
+
+Mục tiêu của bài toán là dự đoán biến nhãn \textbf{deposit} với hai giá trị \textit{yes/no}.
+
+\section{Bảng mô tả chi tiết các thuộc tính}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|p{3cm}|p{3cm}|p{2.5cm}|p{6.5cm}|}
+\hline
+\textbf{Nhóm} & \textbf{Thuộc tính} & \textbf{Type} & \textbf{Mô tả} \\
+\hline
+
+\multirow{8}{=}{\centering Thông tin \\ khách hàng}
+& age & Numeric & Tuổi của khách hàng \\
+& job & Categorical & Nghề nghiệp khách hàng: admin., blue-collar, entrepreneur, housemaid, management, retired, self-employed, services, student, technician, unemployed, unknown \\
+& marital & Categorical & Tình trạng hôn nhân: divorced, married, single, unknown \\
+& education & Categorical & Trình độ học vấn: primary, secondary, tertiary, unknown \\
+& default & Categorical & Nợ xấu: yes, no, unknown  \\
+& housing & Categorical & Vay mua nhà: yes, no, unknown\\
+& loan & Categorical & Vay cá nhân: yes, no, unknown\\
+& balance & Numeric & Số dư tài khoản hiện tại \\
+\hline
+\hline
+
+\multirow{4}{*}{Liên hệ gần nhất}
+& contact & Categorical & Phương thức liên lạc gần nhất: cellular, telephone \\
+& month & Categorical & Tháng của ngày liên hệ gần nhất: jan, feb, mar, ..., dec \\
+& day & Categorical & Thứ của ngày liên hệ gần nhất: mon, tue, wed, thu, fri \\
+& duration & Numeric & Thời lượng cuộc gọi gần nhất \\
+\hline
+\hline
+
+\multirow{4}{*}{Lịch sử chiến dịch}
+& campaign & Numeric & Số lần liên hệ trong chiến dịch hiện tại \\
+& pdays & Numeric & Số ngày kể từ lần liên hệ trước đó \\
+& previous & Numeric & Số lần liên hệ trước chiến dịch này \\
+& poutcome & Categorical & failure, nonexistent, success \\
+\hline
+\hline
+
+\multirow{1}{*}{Nhãn}
+& deposit & Binary & Đăng ký tiền gửi: yes/no \\
+\hline
+
+\end{tabular}
+\caption{Mô tả chi tiết các thuộc tính trong bộ dữ liệu}
+\end{table}

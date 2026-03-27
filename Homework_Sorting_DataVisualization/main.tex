@@ -1,0 +1,146 @@
+\documentclass[12pt]{article}
+% \documentclass[12pt,a4paper]{report}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{float}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage[colorlinks=true,linkcolor=blue, citecolor=red]{hyperref}
+\usepackage{url}
+\usepackage[top=.75in, left=.75in, right=.75in, bottom=1in]{geometry}
+\usepackage[utf8]{vietnam}
+\usepackage{multirow}
+\usepackage{booktabs} % Tạo đường kẻ bảng đẹp
+\usepackage{amssymb}  % Thư viện cho biểu tượng checkmark
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{enumitem}
+% For algorithm
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+% Định nghĩa màu sắc sử dụng trong slide
+\definecolor{primary}{RGB}{41, 128, 185}
+\definecolor{highrisk}{RGB}{231, 76, 60}
+\usepackage{hcmus-report-template}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{longtable}
+\usepackage{graphicx}
+% \usepackage[utf8]{inputenc}
+% \usepackage[T1]{fontenc}
+
+% Disable indentation on new paragraphs
+\setlength{\parindent}{0pt}
+
+% Line spacing 1.5
+\renewcommand{\baselinestretch}{1.5}
+
+% Using bibtex
+%\usepackage{biblatex}
+% Optional: graphic path
+% \graphicspath{PATH_TO_GRAPHIC_FOLDER}
+
+% To use Times font family, uncomment this row
+% \usepackage{mathptmx}
+
+% To use roman section / subsection, uncomment these rows
+% \renewcommand{\thesection}{\Roman{section}}
+% \renewcommand{\thesubsection}{\thesection.\Roman{subsection}}
+
+% Define course name, report name and report title.
+\newcommand{\coursename}{Trực quan hóa dữ liệu}
+\newcommand{\reportname}{Sorting Data Visualization}
+\newcommand{\reporttitle}{BÀI TẬP VỀ NHÀ}
+
+\newcommand{\studentname}{23120200 - Nguyễn Hưng Thịnh \\ 23120222 - Lê Thành Công \\ 23120232 - Lê Thượng Đế \\ 23122028 - Vũ Nguyễn Trung Hiếu \\ 23122046 - Phan Ngọc Quân }
+\newcommand{\teachername}{TS. Bùi Tiến Lên}
+
+% Header
+\lhead{\reporttitle}
+\rhead{
+Trường Đại học Khoa học Tự nhiên - ĐHQG HCM\\
+\coursename
+}
+
+% Footer
+
+
+% ============ DOCUMENT ============
+\begin{document}
+
+\pagenumbering{roman}
+\input{content/title.tex}
+
+\tableofcontents
+\pagebreak
+\listoffigures
+\pagebreak
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+
+
+% \input{content/description}
+% \input{content/object}
+% \input{content/Q1}
+% \input{content/Q2}
+% \input{content/q3}
+\input{content/main-section}
+
+
+% References
+%\input{ref/ref.tex}
+% \cleardoublepage
+% \phantomsection
+% \addcontentsline{toc}{section}{Tài liệu}
+
+% \begin{thebibliography}{9}
+
+% \bibitem{mit_util_lab}
+% MIT PDOS,
+% \textit{6.1810: Utilities Lab}.
+% 2024.
+% Available at:
+% \url{https://pdos.csail.mit.edu/6.1810/2024/labs/util.html}.
+
+% \bibitem{mit_lab_guidance}
+% MIT PDOS,
+% \textit{6.1810: Lab Guidance}.
+% 2024.
+% Available at:
+% \url{https://pdos.csail.mit.edu/6.1810/2024/labs/guidance.html}.
+
+% \bibitem{mit_gdb_slides}
+% MIT PDOS,
+% \textit{GDB Tutorial Slides}.
+% 2019.
+% Available at:
+% \url{https://pdos.csail.mit.edu/6.828/2019/lec/gdb_slides.pdf}.
+
+% \bibitem{youtube_xv6_gdb}
+% MIT 6.1810 Staff,
+% \textit{Debugging xv6 with GDB (Video)}.
+% 2024.
+% Available at:
+% \url{https://www.youtube.com/watch?v=64Cvc6o1cyE}.
+
+% \bibitem{xv6_github_notes}
+% whileskies,
+% \textit{xv6-labs-2020: Lab 2 – System Calls}.
+% 2020.
+% Available at:
+% \url{https://github.com/whileskies/xv6-labs-2020/blob/main/doc/Lab2-system%20calls.md}.
+
+% \end{thebibliography}
+
+% Appendix
+%\appendix
+% Add \cleardoublepage to move appendices to next page.
+% \input{appendix/appendix.tex}
+\end{document}
