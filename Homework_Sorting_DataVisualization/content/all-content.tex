@@ -22,11 +22,10 @@ Về mặt triển khai, nhóm chúng em chủ động cài đặt chương trì
 
 Các mục tiêu chính của báo cáo gồm:
 \begin{itemize}[leftmargin=1.2cm]
-    \item So sánh hiệu năng giữa ba thuật toán theo kích thước đầu vào $n$.
-    \item Đối chiếu kết luận trên hai hệ trục: \textbf{tuyến tính} và \textbf{log trên trục $y$}.
-    \item Kiểm chứng thực nghiệm theo tỉ số chuẩn hóa $T(n)/g(n)$ và $\text{comparisons}/C_{\text{exact}}(n)$ để đối chiếu với bậc tăng trưởng lý thuyết.
-    \item Rút ra insight theo từng kiểu dữ liệu, đặc biệt ở mốc kích thước lớn.
-    \item Đánh giá chất lượng kỹ thuật trực quan hóa dùng trong báo cáo.
+    \item Xây dựng các biểu đồ đúng chuẩn trực quan hóa dữ liệu để so sánh thuật toán theo kích thước đầu vào $n$.
+    \item So sánh và phân tích khác biệt khi dùng \textbf{thang tuyến tính} và \textbf{thang log trên trục $y$}.
+    \item Rút ra insight về hành vi thuật toán theo từng đặc trưng dữ liệu.
+    \item Đánh giá các kỹ thuật trực quan được sử dụng và lý do lựa chọn.
 \end{itemize}
 
 \subsection{Phạm vi bài làm}
@@ -203,12 +202,10 @@ Các câu hỏi chính gồm:
 \toprule
 \textbf{Figure} & \textbf{Scale} & \textbf{Mục tiêu đọc hiểu} \\
 \midrule
-\texttt{time\_linear} & Linear-$y$ & Nhìn chênh lệch tuyệt đối về thời gian, đặc biệt ở vùng giá trị lớn. \\
-\texttt{time\_logy} & Log-$y$ & So sánh tốc độ tăng tương đối, tránh nén dữ liệu của thuật toán nhanh. \\
-\texttt{time\_bar\_nmax\_logy} & Log-$y$ & So sánh trực tiếp ba thuật toán tại $n$ lớn nhất theo từng input type. \\
-\texttt{comparisons\_loglog} & Log-log & Kiểm tra xu hướng số phép so sánh theo bậc độ lớn của $n$. \\
-\texttt{time\_ratio\_over\_theory} & Linear-$y$ & Kiểm chứng trực quan tỉ số $T(n)/g(n)$ cho ba nhóm độ phức tạp. \\
-\texttt{comparison\_ratio\_exact} & Linear-$y$ & Đối chiếu số phép so sánh đo được với mô hình lý thuyết chính xác. \\
+\texttt{figure\_01\_time\_linear} & Linear-$y$ & Thể hiện mức chênh lệch tuyệt đối thời gian chạy. \\
+\texttt{figure\_02\_time\_logy} & Log-$y$ & Làm rõ xu hướng tăng và khác biệt tốc độ tăng giữa thuật toán. \\
+\texttt{figure\_03\_time\_bar\_nmax\_logy} & Log-$y$ & So sánh trực tiếp ba thuật toán tại $n$ lớn nhất theo từng kiểu dữ liệu. \\
+\texttt{figure\_04\_comparisons\_loglog} & Log-log & Quan sát số phép so sánh (phân tích phụ trợ). \\
 \bottomrule
 \end{tabular}
 \caption{Bộ figure dùng cho phân tích chính và phụ trợ}
@@ -343,85 +340,20 @@ Do đó, insight không chỉ dựa vào một chỉ số duy nhất mà đượ
 
 \textbf{Many Duplicates:}
 \begin{itemize}[leftmargin=1.2cm]
-    \item Counting thể hiện ưu thế rõ và ổn định, phù hợp với bản chất thuật toán khi miền giá trị có nhiều phần tử lặp.
-    \item Quick vẫn giữ vị trí trung gian; Insertion tăng mạnh ở mốc $n$ lớn.
+    \item Counting Sort đặc biệt phù hợp khi dữ liệu có nhiều giá trị lặp.
+    \item Khoảng cách giữa Counting Sort và Insertion Sort trở nên rõ ràng ở mốc $n$ lớn.
 \end{itemize}
 
-\subsection{Bổ sung kiểm chứng độ phức tạp bằng tỉ số chuẩn hóa}
+\subsection{Insight tại mốc $n$ lớn nhất}
 
-Phần này là lớp phân tích mở rộng nằm trong mục \textit{Kết quả và insight từ biểu đồ},
-nhằm trả lời trực tiếp yêu cầu đối chiếu ba nhóm độ phức tạp $O(n^2)$, $O(n\log_2 n)$ và $O(n)$
-trên bốn kiểu dữ liệu đầu vào.
-
-\subsubsection{Mô hình chuẩn hóa sử dụng trong bài}
-
-Để kiểm chứng trực quan ba nhóm độ phức tạp $O(n^2)$, $O(n\log_2 n)$ và $O(n)$,
-nhóm chúng em dùng tỉ số:
-\[
-R_T(n)=\frac{T(n)}{g(n)}
-\]
-với $g(n)$ là hàm chuẩn hóa theo từng thuật toán:
+Hình \ref{fig:bar-nmax} cho thấy bức tranh "áp lực tải" tại $n=100000$:
 \begin{itemize}[leftmargin=1.2cm]
-    \item Insertion Sort: $g(n)=n^2$.
-    \item Quick Sort: $g(n)=n\log_2 n$.
-    \item Counting Sort: $g(n)=n+k$ (trong dữ liệu hiện tại, $k$ lấy theo quy tắc bộ sinh dữ liệu).
+    \item Insertion Sort có chi phí cao vượt trội so với hai thuật toán còn lại.
+    \item Quick Sort là lựa chọn cân bằng tốt giữa các kiểu dữ liệu.
+    \item Counting Sort giữ mức thời gian thấp nhất trong tập dữ liệu đo hiện tại.
 \end{itemize}
 
-Ngoài thời gian chạy, nhóm cũng kiểm chứng tỉ số theo số phép so sánh:
-\[
-R_C(n)=\frac{\text{comparisons}(n)}{C_{\text{exact}}(n)}
-\]
-với:
-\begin{itemize}[leftmargin=1.2cm]
-    \item Insertion Sort: $C_{\text{exact}}(n)=\frac{n(n-1)}{4}+(n-1)$.
-    \item Quick Sort: $C_{\text{exact}}(n)=2(n+1)H_n-4n$.
-    \item Counting Sort: $C_{\text{exact}}(n)=n+k$.
-\end{itemize}
-
-\subsubsection{Hình kiểm chứng tỉ số thời gian chuẩn hóa}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.98\textwidth]{img/figure_05_time_ratio_over_theory_linear.pdf}
-    \caption{Tỉ số $T(n)/g(n)$ theo từng thuật toán (chia panel theo thuật toán, màu/marker theo input type). Nếu mô hình bậc tăng trưởng phù hợp thì đường có xu hướng ổn định quanh một hằng số theo $n$.}
-    \label{fig:time-ratio-theory}
-\end{figure}
-
-\textbf{Nhận xét chính từ Hình \ref{fig:time-ratio-theory}:}
-\begin{itemize}[leftmargin=1.2cm]
-    \item Cả ba panel đều cho thấy tỉ số $T(n)/g(n)$ giữ cùng bậc độ lớn khi $n$ tăng từ $10^2$ đến $10^5$, củng cố rằng chuẩn hóa theo $n^2$, $n\log_2 n$ và $n+k$ là phù hợp.
-    \item Với Insertion Sort, nhóm Nearly Sorted có tỉ số thấp hơn rõ rệt so với Random/Reversed, phản ánh ảnh hưởng mạnh của thứ tự đầu vào lên hệ số hằng.
-    \item Với Quick Sort và Counting Sort, các đường nằm trong dải hẹp hơn giữa các mốc $n$, cho thấy hành vi ổn định theo mô hình đã chọn.
-    \item Giá trị trục $y$ có thể rất nhỏ (ví dụ cỡ $10^{-9}$ đến $10^{-6}$) vì thời gian đang tính bằng ms; điều này không phủ định mô hình, mà chỉ cho thấy hệ số hằng và đơn vị đo nhỏ.
-\end{itemize}
-
-\subsubsection{Hình kiểm chứng tỉ số số phép so sánh}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.98\textwidth]{img/figure_06_comparison_ratio_exact_linear.pdf}
-    \caption{Tỉ số comparisons / mô hình chính xác theo từng thuật toán. Đường chuẩn $y=1$ giúp đọc nhanh mức lệch so với mô hình lý thuyết.}
-    \label{fig:comparison-ratio-theory}
-\end{figure}
-
-\textbf{Nhận xét chính từ Hình \ref{fig:comparison-ratio-theory}:}
-\begin{itemize}[leftmargin=1.2cm]
-    \item Insertion Sort có dải tỉ số rộng nhất (xấp xỉ $0.0415 \rightarrow 3.9999$), vì độ nhạy rất cao với cấu trúc dữ liệu đầu vào.
-    \item Quick Sort dao động quanh dải xấp xỉ $1.595 \rightarrow 8.173$, cho thấy vẫn cùng bậc tăng trưởng nhưng hệ số hằng thay đổi theo input type.
-    \item Counting Sort ổn định hơn theo công thức $n+k$ (xấp xỉ $2.500 \rightarrow 3.951$), phù hợp với dữ liệu có miền giá trị kiểm soát được.
-    \item Tỉ số tiến về một hằng số không bắt buộc phải bằng $1$; trong thực nghiệm, hằng số phụ thuộc cài đặt, dữ liệu và chi phí hằng số của môi trường chạy.
-\end{itemize}
-
-\subsubsection{Đánh giá kỹ thuật trực quan cho phần kiểm chứng độ phức tạp}
-
-\begin{itemize}[leftmargin=1.2cm]
-    \item Chia panel theo \texttt{algorithm} giúp người đọc tránh trộn lẫn ba mô hình chuẩn hóa khác nhau trên cùng một trục.
-    \item Dùng chung mã hóa màu/marker cho \texttt{input\_type} giúp liên kết trực tiếp giữa hình thời gian ban đầu và hình tỉ số chuẩn hóa.
-    \item Đường tham chiếu $y=1$ có giá trị giải thích mạnh: đây là mốc để đánh giá nhanh mức sai khác giữa đo đạc thực nghiệm và mô hình.
-    \item Việc xuất bản vector (PDF) giữ được khả năng phóng to để đọc legend, nhãn trục và chênh lệch nhỏ giữa các đường.
-\end{itemize}
-
-\subsection{Kết luận rút ra trực tiếp từ toàn bộ bộ hình}
+\subsection{Bảng tổng hợp kết luận chính}
 
 \begin{table}[H]
 \centering
@@ -430,52 +362,84 @@ với:
 \toprule
 \textbf{Khía cạnh} & \textbf{Insight trực quan chính} \\
 \midrule
-Thứ hạng thuật toán & Trên toàn bộ figure thời gian, thứ hạng không đảo chiều ở $n$ lớn: Counting Sort $<$ Quick Sort $<$ Insertion Sort. \\
-Ảnh hưởng kiểu dữ liệu & Reversed là trường hợp bất lợi nhất cho Insertion; Nearly Sorted là trường hợp Insertion cải thiện rõ nhất. \\
-Vai trò của scale & Linear cho đọc chênh lệch tuyệt đối, log-$y$ cho đọc cấu trúc tăng trưởng; cần dùng cả hai để tránh kết luận thiếu. \\
-Kiểm chứng bậc tăng trưởng & Figure tỉ số chuẩn hóa cho thấy $T(n)/g(n)$ và $\text{comparisons}/C_{\text{exact}}(n)$ ổn định theo từng thuật toán, củng cố tính phù hợp của mô hình $n^2$, $n\log_2 n$, $n+k$. \\
-Độ tin cậy insight & Kết luận được đồng kiểm chứng qua hai lớp biểu diễn: thời gian chạy và số phép so sánh chuẩn hóa. \\
+Tốc độ tổng thể & Counting Sort và Quick Sort vượt trội so với Insertion Sort ở $n$ lớn. \\
+Độ nhạy dữ liệu & Insertion Sort nhạy với dữ liệu khó (đặc biệt reversed); Counting Sort ổn định trong bộ dữ liệu có nhiều trùng lặp. \\
+Giá trị của log-$y$ & Log-$y$ giúp nhìn rõ khác biệt tương đối và xu hướng tăng của từng thuật toán. \\
 \bottomrule
 \end{tabular}
-\caption{Tổng hợp insight sau khi đối chiếu cả biểu đồ hiệu năng và biểu đồ kiểm chứng mô hình}
+\caption{Top insight tóm tắt từ các biểu đồ}
 \label{tab:top-insights}
 \end{table}
 
 \section{Thảo luận về scale tuyến tính và phi tuyến}
 
-\subsection{Vì sao cần cả hai loại scale}
+\subsection{Vai trò bổ trợ giữa linear scale và log-$y$ scale}
 
-\textbf{Linear scale} phù hợp để đọc chênh lệch tuyệt đối về thời gian chạy (đơn vị ms).
-Tuy nhiên khi một thuật toán lớn vượt trội, các đường còn lại dễ bị nén sát trục và khó quan sát.
-
-\textbf{Log-$y$ scale} giúp:
+Nhóm chúng em không xem hai scale là hai phiên bản thay thế, mà là hai "ống kính" phục vụ hai câu hỏi khác nhau:
 \begin{itemize}[leftmargin=1.2cm]
-    \item Giảm hiện tượng nén dữ liệu khi khoảng giá trị quá rộng.
-    \item Làm rõ tốc độ tăng tương đối giữa các thuật toán.
-    \item Dễ quan sát xu hướng trên nhiều bậc độ lớn.
+    \item \textbf{Linear scale} trả lời câu hỏi về \textit{chi phí tuyệt đối}: thuật toán nào tốn thêm bao nhiêu ms trong thực tế.
+    \item \textbf{Log-$y$ scale} trả lời câu hỏi về \textit{cấu trúc tăng trưởng}: tốc độ tăng tương đối của từng thuật toán khi $n$ tăng.
 \end{itemize}
 
-\subsection{Nguyên tắc diễn giải đúng trên log scale}
+Trong bộ hình hiện tại, nếu chỉ nhìn linear thì hai thuật toán nhanh dễ bị dồn sát đáy (mất khả năng so sánh),
+ngược lại nếu chỉ nhìn log-$y$ thì người đọc có thể đánh giá thiếu trực giác về chênh lệch ms tuyệt đối.
+Do đó, kết luận cuối cùng luôn được rút ra sau khi đối chiếu cả hai hình.
 
-Khi đọc Hình \ref{fig:time-logy}, cần lưu ý:
+\subsection{Nguyên tắc đọc đúng trên log-$y$ (tránh diễn giải sai)}
+
+Khi đọc Hình \ref{fig:time-logy}, nhóm chúng em áp dụng các quy tắc sau:
 \begin{itemize}[leftmargin=1.2cm]
-    \item Khoảng cách theo trục $y$ thể hiện tỷ lệ nhân, không phải chênh lệch cộng tuyến tính.
-    \item Độ dốc trên log scale phản ánh mức tăng theo bậc độ lớn.
-    \item Kết luận cuối cùng nên đối chiếu cả Hình \ref{fig:time-linear} và Hình \ref{fig:time-logy}.
+    \item Khoảng cách dọc bằng nhau trên trục $y$ log biểu thị \textbf{cùng tỷ lệ nhân}, không biểu thị cùng mức chênh cộng.
+    \item Độ dốc lớn hơn trên log-$y$ nghĩa là tốc độ tăng theo bậc độ lớn lớn hơn.
+    \item Không suy ra trực tiếp "chênh $x$ ms" từ log-$y$; chênh tuyệt đối phải quay lại linear scale hoặc bảng số liệu.
 \end{itemize}
 
-\subsection{Đánh giá kỹ thuật trực quan đã sử dụng}
+Từ các quy tắc này, log-$y$ được dùng để đọc cấu trúc, còn linear dùng để đọc mức độ tác động thực tế.
+
+\subsection{Các bẫy thị giác và cách nhóm kiểm soát}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{p{4.0cm}p{4.8cm}p{4.2cm}}
+\toprule
+\textbf{Bẫy thị giác} & \textbf{Rủi ro diễn giải} & \textbf{Cách kiểm soát trong báo cáo} \\
+\midrule
+Nén dữ liệu ở linear & Đường của thuật toán nhanh gần như trùng nhau, khó so sánh & Dùng thêm Hình \ref{fig:time-logy} để mở tách các đường nhanh \\
+Đọc sai log-$y$ như linear & Hiểu sai khoảng cách là chênh ms tuyệt đối & Ghi rõ "log scale" trong caption và đối chiếu chéo với Hình \ref{fig:time-linear} \\
+Chồng lấn chú giải & Che khuất dữ liệu, giảm khả năng đọc xu hướng & Đặt legend ngoài vùng dữ liệu \\
+Phụ thuộc màu đơn thuần & Khó đọc khi in xám hoặc người đọc mù màu một phần & Kết hợp màu + marker + thứ tự thuật toán cố định \\
+\bottomrule
+\end{tabular}
+\caption{Bẫy trực quan thường gặp và biện pháp kiểm soát}
+\label{tab:viz-pitfalls}
+\end{table}
+
+\subsection{Quy trình suy luận trực quan 4 bước mà nhóm áp dụng}
+
+Để đảm bảo insight không bị cảm tính, nhóm chúng em đọc hình theo quy trình cố định:
+\begin{enumerate}[leftmargin=1.2cm]
+    \item \textbf{Bước 1 - Đọc hình tổng thể (global pattern):} nhận diện thứ hạng và xu hướng chung trên từng panel.
+    \item \textbf{Bước 2 - Đọc theo scale phù hợp:} dùng linear để đánh giá tác động tuyệt đối, dùng log-$y$ để đọc cấu trúc tăng trưởng.
+    \item \textbf{Bước 3 - Đọc điểm quyết định:} dùng Hình \ref{fig:bar-nmax} tại $n=100000$ để kết luận theo góc nhìn triển khai thực tế.
+    \item \textbf{Bước 4 - Kiểm chứng chéo:} đối chiếu với Hình \ref{fig:comparisons} và bảng số liệu để xác thực insight.
+\end{enumerate}
+
+Quy trình này giúp giảm nguy cơ "ảo giác trực quan" khi dữ liệu có dải giá trị rộng.
+
+\subsection{Đánh giá hiệu quả các kỹ thuật trực quan đã dùng}
 
 \begin{itemize}[leftmargin=1.2cm]
-    \item \textbf{Faceting theo input type:} giảm nhiễu khi so sánh nhiều kiểu dữ liệu cùng lúc.
-    \item \textbf{Màu + marker nhất quán:} hỗ trợ theo dõi cùng thuật toán xuyên suốt các hình.
-    \item \textbf{Legend đặt ngoài vùng dữ liệu:} tránh che khuất đường hoặc cột.
-    \item \textbf{Bản vector (PDF/SVG):} giữ độ sắc nét khi phóng to trong báo cáo và trình chiếu.
+    \item \textbf{Faceting theo input type} giúp người đọc tách bối cảnh từng kiểu dữ liệu, tránh trộn tín hiệu.
+    \item \textbf{Màu + marker nhất quán} hỗ trợ theo dõi cùng một thuật toán xuyên suốt báo cáo.
+    \item \textbf{Legend ngoài vùng dữ liệu} cải thiện khả năng đọc và tránh che đường/cột.
+    \item \textbf{Xuất vector (PDF/SVG)} giúp giữ nguyên độ nét khi zoom, đặc biệt quan trọng khi chấm báo cáo PDF.
 \end{itemize}
 
-\section{Kết luận và hướng phát triển}
+Tổng hợp lại, cách thiết kế hiện tại đáp ứng đồng thời ba mục tiêu của môn học:
+\textit{đúng dữ liệu} (accuracy), \textit{dễ đọc} (readability), và \textit{dễ diễn giải đúng} (interpretability).
 
-\subsection{Kết luận}
+\section{Kết luận}
 
 Trong báo cáo này, nhóm chúng em đã xây dựng pipeline trực quan hóa hoàn chỉnh từ dữ liệu kết quả có sẵn và tạo bộ figure phục vụ phân tích chuyên sâu.
 Hai góc nhìn scale tuyến tính và log-$y$ bổ trợ lẫn nhau:
@@ -486,21 +450,6 @@ Hai góc nhìn scale tuyến tính và log-$y$ bổ trợ lẫn nhau:
 
 Trên bộ dữ liệu đo hiện tại, Quick Sort và Counting Sort có hiệu năng tốt hơn Insertion Sort ở kích thước lớn;
 đồng thời Counting Sort đặc biệt phù hợp với dữ liệu nhiều phần tử trùng lặp.
-
-\subsection{Giới hạn}
-
-\begin{itemize}[leftmargin=1.2cm]
-    \item Dữ liệu sử dụng là tập kết quả có sẵn, không mở rộng thêm cấu hình phần cứng hay số lần chạy.
-    \item Kết luận phụ thuộc vào bộ input type và dải giá trị đã đo trong bài.
-\end{itemize}
-
-\subsection{Hướng phát triển}
-
-\begin{itemize}[leftmargin=1.2cm]
-    \item Bổ sung benchmark trên nhiều môi trường chạy khác nhau để tăng tính khái quát.
-    \item Mở rộng thêm thuật toán (Merge Sort, Heap Sort, Radix Sort) để so sánh đa chiều hơn.
-    \item Bổ sung các chỉ số mở rộng như memory usage, cache behavior hoặc throughput.
-\end{itemize}
 
 \newpage
 \addcontentsline{toc}{section}{Tài liệu tham khảo}

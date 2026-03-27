@@ -1,0 +1,34 @@
+\section{Giới thiệu và mục tiêu}
+
+Trong đồ án này, tôi tập trung trực quan hóa hiệu năng của ba thuật toán sắp xếp tiêu biểu:
+\textbf{Insertion Sort}, \textbf{Quick Sort} và \textbf{Counting Sort}.
+Để đánh giá toàn diện, tôi xây dựng dữ liệu đầu vào theo bốn nhóm đặc trưng:
+\begin{itemize}[leftmargin=1.2cm]
+    \item Random.
+    \item Reversed.
+    \item Nearly Sorted.
+    \item Many Duplicates.
+\end{itemize}
+
+Về mặt triển khai, tôi chủ động cài đặt chương trình C++ để:
+\begin{itemize}[leftmargin=1.2cm]
+    \item Cài đặt các thuật toán sắp xếp cần so sánh.
+    \item Đo thời gian chạy theo cùng một tiêu chuẩn và đơn vị ms.
+    \item Ghi nhận thêm số phép so sánh để hỗ trợ phân tích độ phức tạp thực nghiệm.
+    \item Tạo dữ liệu đầu vào theo từng loại để đảm bảo so sánh khách quan và nhất quán.
+\end{itemize}
+
+\subsection{Mục tiêu phân tích}
+
+Các mục tiêu chính của báo cáo gồm:
+\begin{itemize}[leftmargin=1.2cm]
+    \item So sánh hiệu năng giữa ba thuật toán theo kích thước đầu vào $n$.
+    \item Đối chiếu kết luận trên hai hệ trục: \textbf{tuyến tính} và \textbf{log trên trục $y$}.
+    \item Rút ra insight theo từng kiểu dữ liệu, đặc biệt ở mốc kích thước lớn.
+    \item Đánh giá chất lượng kỹ thuật trực quan hóa dùng trong báo cáo.
+\end{itemize}
+
+\subsection{Phạm vi bài làm}
+
+Bài làm sử dụng kết quả thực nghiệm đã đo được từ chương trình C++ do tôi xây dựng.
+Các kết quả này được lưu trong bộ tệp \texttt{results} và là nguồn dữ liệu duy nhất cho phần trực quan hóa.
